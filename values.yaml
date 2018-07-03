@@ -1,0 +1,29 @@
+# Default values for node-red.
+replicaCount: 1
+
+image:
+  repository: nodered/node-red-docker
+  tag: v8
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "node-red-auth"
+  path: /
+  hosts:
+    - node-red.local
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
