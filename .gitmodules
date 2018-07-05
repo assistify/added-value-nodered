@@ -1,0 +1,3 @@
+[submodule "docker/workflows/operations"]
+	path = docker/workflows/operations
+	url = https://github.com/assistify/assistify-wf-operations.git
