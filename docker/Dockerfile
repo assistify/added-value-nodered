@@ -1,14 +1,15 @@
 FROM nodered/node-red-docker:latest
 
-USER root
 
-RUN apt-get update && \
-  apt-get install -y git
+# Install node-packages which are needed for the flows
+RUN npm install node-red-contrib-httpauth
+RUN npm install node-red-dashboard
 
-ARG ACCESS_TOKEN
-RUN echo $ACCESS_TOKEN
+# Add some very basic settings
+ADD ./settings.js /data/
 
-RUN git clone https://${ACCESS_TOKEN}@github.com/assistify/assistify-wf-ci-deploy.git
-RUN mv assistify-wf-ci-deploy/* /data/
+# The config is needed to propagate the currently active project
+ADD ./.config.json /data
 
-USER node-red
+# Copy the downloaded flow-files
+COPY --chown=node-red:node-red ./projects /data/projects

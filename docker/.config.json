@@ -1,0 +1,10 @@
+{
+ "projects": {
+  "projects": {
+   "assistify-workflows": {
+    "credentialSecret": "Nytp64K2E27uXxSL"
+   }
+  },
+  "activeProject": "assistify-workflows"
+ }
+}
