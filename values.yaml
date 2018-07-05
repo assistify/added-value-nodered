@@ -12,13 +12,29 @@ service:
 
 ingress:
   enabled: false
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    ingress.kubernetes.io/auth-type: "basic"
-    ingress.kubernetes.io/auth-secret: "node-red-auth"
+  # We don't need no basic authentication here, this is handled by node-red's settings
+  annotations: {}
   path: /
   hosts:
     - node-red.local
+
+settings:
+  uiHost: ""
+  httpAdminRoot: "/admin"
+  httpNodeRoot: "/nodes"
+  uiRoot: "ui"
+  auth:
+    adminUser: "admin"
+    adminPassHash: ""
+  requireHttps: false
+  logging:
+    level: "warn"
+    metrics: false
+    audit: false
+  projects:
+    enabled: true
+  credentialSecret: ""
+  userDir: "/usr/src/node-red/config"
 
 resources: {}
 

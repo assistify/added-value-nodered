@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "node-red.fullname" . }}-settings
+  labels:
+    app: {{ template "node-red.name" . }}
+    chart: {{ template "node-red.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  settings.js: |
+    module.exports = {
+        // the tcp port that the Node-RED web server is listening on
+        uiPort: process.env.PORT || 1880,
+        
+        // By default, credentials are encrypted in storage using a generated key. To
+        // specify your own secret, set the following property.
+        // If you want to disable encryption of credentials, set this property to false.
+        // Note: once you set this property, do not change it - doing so will prevent
+        // node-red from being able to decrypt your existing credentials and they will be
+        // lost.
+        // credentialSecret: {{ required "provide a secret used to encrypt and decrypt flows --set settings.credentialSecret=..." .Values.settings.credentialSecret }},
+        credentialSecret: "{{ .Values.settings.credentialSecret }}",
+
+        // By default, the Node-RED UI accepts connections on all IPv4 interfaces.
+        // To listen on all IPv6 addresses, set uiHost to "::",
+        // The following property can be used to listen on a specific interface. For
+        // example, the following would only allow connections from the local machine.
+        // uiHost: "{{ .Values.settings.uiHost }}",
+
+        // By default, the Node-RED UI is available at http://localhost:1880/
+        // The following property can be used to specify a different root path.
+        // If set to false, this is disabled.
+        httpAdminRoot: "{{ .Values.settings.httpAdminRoot }}",
+
+        // Some nodes, such as HTTP In, can be used to listen for incoming http requests.
+        // By default, these are served relative to "/". The following property
+        // can be used to specifiy a different root path. If set to false, this is
+        // disabled.
+        httpNodeRoot: "{{ .Values.settings.httpNodeRoot }}",
+
+        
+        // If you installed the optional node-red-dashboard you can set it"s path
+        // relative to httpRoot
+        ui: { path: "{{ .Values.settings.uiRoot }}" },
+
+        // Securing Node-RED
+        // -----------------
+        // To password protect the Node-RED editor and admin API, the following
+        // property can be used. See http://nodered.org/docs/security.html for details.
+        // username: {{ required "You need to specify an admin user --set settings.auth.adminUser= " .Values.settings.auth.adminUser }}
+        // password: {{ required "You need to specify an admin password --set settings.auth.adminPassHash= " .Values.settings.auth.adminPassHash }}
+
+        adminAuth: {
+            type: "credentials",
+            users: [{
+                username: "{{ .Values.settings.auth.adminUser }}",
+                password: "{{ .Values.settings.auth.adminPassHash }}",
+                permissions: "*"
+            }]
+        },
+
+        // To password protect the node-defined HTTP endpoints (httpNodeRoot), or
+        // the static content (httpStatic), the following properties can be used.
+        // The pass field is a bcrypt hash of the password.
+        // See http://nodered.org/docs/security.html#generating-the-password-hash
+        httpNodeAuth: {
+            user: "{{ required "You need to specify an admin user --set settings.auth.adminUser= " .Values.settings.auth.adminUser }}",
+            pass: "{{ required "You need to specify an admin password --set settings.auth.adminPassHash= " .Values.settings.auth.adminPassHash }}"
+        },
+        //httpStaticAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
+
+        // The following property can be used to cause insecure HTTP connections to
+        // be redirected to HTTPS.
+        requireHttps: {{ .Values.settings.requireHttps }},
+
+        // Configure the logging output
+        logging: {
+            // Only console logging is currently supported
+            console: {
+                // Level of logging to be recorded. Options are:
+                // fatal - only those errors which make the application unusable should be recorded
+                // error - record errors which are deemed fatal for a particular request + fatal errors
+                // warn - record problems which are non fatal + errors + fatal errors
+                // info - record information about the general running of the application + warn + error + fatal errors
+                // debug - record information which is more verbose than info + info + warn + error + fatal errors
+                // trace - record very detailed logging + debug + info + warn + error + fatal errors
+                // off - turn off all logging (doesn"t affect metrics or audit)
+                level: "{{ .Values.settings.logging.level }}",
+                // Whether or not to include metric events in the log output
+                metrics: {{ .Values.settings.logging.metrics }},
+                // Whether or not to include audit events in the log output
+                audit: {{ .Values.settings.logging.audit }}
+            }
+        },
+
+        // Customising the editor
+        editorTheme: {
+            projects: {
+                // To enable the Projects feature, set this value to true
+                enabled: {{ .Values.settings.projects.enabled }}
+            }
+        }
+    }

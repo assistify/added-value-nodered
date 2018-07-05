@@ -7,6 +7,8 @@ metadata:
     chart: {{ template "node-red.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configuration.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -23,18 +25,30 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env }}
+          env:
+{{ toYaml .Values.env | indent 10}}
+          {{- end -}}
           ports:
             - name: http
               containerPort: 1880
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /admin
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /admin
               port: http
+          volumeMounts:
+          - mountPath: /data/settings.js
+            name: config
+            subPath: settings.js
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "node-red.fullname" . }}-settings
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}

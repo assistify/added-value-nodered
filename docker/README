@@ -1,0 +1,1 @@
+This folder contains everything which is needed in order to create a custom docker image which we can use in order to ship node-red along with our flows and nodes.
