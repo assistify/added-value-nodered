@@ -2,9 +2,9 @@
 replicaCount: 1
 
 image:
-  repository: nodered/node-red-docker
-  tag: v8
-  pullPolicy: IfNotPresent
+  repository: assistify/node-red
+  tag: latest
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -32,9 +32,14 @@ settings:
     metrics: false
     audit: false
   projects:
-    enabled: true
+    # We should not be enabling projects since it requires the flow to reside in a git repository
+    enabled: false
   credentialSecret: ""
   userDir: "/usr/src/node-red/config"
+  
+env:
+  - name: flowsFile
+    value: "/data/projects/assistify-workflows/flow.json"
 
 resources: {}
 
