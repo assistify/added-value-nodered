@@ -1,3 +1,0 @@
-[submodule "docker/projects/assistify-workflows"]
-	path = docker/projects/assistify-workflows
-	url = https://github.com/assistify/assistify-workflows.git

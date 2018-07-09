@@ -7,6 +7,7 @@ USER node-red
 # Install node-packages which are needed for the flows
 RUN npm install node-red-contrib-httpauth
 RUN npm install node-red-dashboard
+RUN npm install node-red-contrib-mongodb3
 
 # Add some very basic settings
 ADD ./settings.js /data/
